@@ -1,0 +1,3 @@
+var a: integer
+a = 1
+println a+2
