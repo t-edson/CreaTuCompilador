@@ -1,4 +1,0 @@
-
-var x: integer
-var y: integer
-x = y
