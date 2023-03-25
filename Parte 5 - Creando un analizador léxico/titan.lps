@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Debug"/>
+    <Units Count="1">
+      <Unit0>
+        <Filename Value="titan.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="24"/>
+        <CursorPos X="10" Y="63"/>
+        <FoldState Value=" T0i2Q11f"/>
+        <UsageCount Value="240"/>
+        <Bookmarks Count="1">
+          <Item0 ID="1"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+      </Unit0>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="titan.lpr"/>
+      </Position1>
+      <Position2>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="15" Column="5"/>
+      </Position2>
+      <Position3>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="1327" Column="32" TopLine="1309"/>
+      </Position3>
+      <Position4>
+        <Filename Value="titan.lpr"/>
+      </Position4>
+      <Position5>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="15" Column="5"/>
+      </Position5>
+      <Position6>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="1344" Column="5" TopLine="1309"/>
+      </Position6>
+      <Position7>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="111" Column="11" TopLine="51"/>
+      </Position7>
+      <Position8>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="103" Column="19" TopLine="51"/>
+      </Position8>
+      <Position9>
+        <Filename Value="titan.lpr"/>
+      </Position9>
+      <Position10>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="111" Column="19" TopLine="45"/>
+      </Position10>
+      <Position11>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="177" Column="13" TopLine="64"/>
+      </Position11>
+      <Position12>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="207" TopLine="84"/>
+      </Position12>
+      <Position13>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="216" Column="13" TopLine="84"/>
+      </Position13>
+      <Position14>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="118" Column="5" TopLine="69"/>
+      </Position14>
+      <Position15>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="63" Column="25" TopLine="25"/>
+      </Position15>
+      <Position16>
+        <Filename Value="titan.lpr"/>
+      </Position16>
+      <Position17>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="119" Column="35" TopLine="93"/>
+      </Position17>
+      <Position18>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="125" Column="13" TopLine="93"/>
+      </Position18>
+      <Position19>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="126" Column="21" TopLine="93"/>
+      </Position19>
+      <Position20>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="270" Column="36" TopLine="114"/>
+      </Position20>
+      <Position21>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="1334" Column="80" TopLine="1136"/>
+      </Position21>
+      <Position22>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="270" Column="29" TopLine="126"/>
+      </Position22>
+      <Position23>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="126" Column="14" TopLine="83"/>
+      </Position23>
+      <Position24>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="125" Column="6" TopLine="83"/>
+      </Position24>
+      <Position25>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="119" Column="28" TopLine="83"/>
+      </Position25>
+      <Position26>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="103" Column="19" TopLine="78"/>
+      </Position26>
+      <Position27>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="257" Column="6" TopLine="78"/>
+      </Position27>
+      <Position28>
+        <Filename Value="titan.lpr"/>
+      </Position28>
+      <Position29>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="61" Column="5" TopLine="24"/>
+      </Position29>
+      <Position30>
+        <Filename Value="titan.lpr"/>
+        <Caret Line="60" Column="17" TopLine="25"/>
+      </Position30>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode="default"/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <BreakPoints>
+      <Item>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="project1.lpr"/>
+        <Line Value="618"/>
+      </Item>
+    </BreakPoints>
+    <Watches>
+      <Item>
+        <Expression Value="srcRow"/>
+      </Item>
+      <Item>
+        <Expression Value="srcLine"/>
+      </Item>
+      <Item>
+        <Expression Value="idxLine"/>
+      </Item>
+      <Item>
+        <Expression Value="srcToken"/>
+      </Item>
+      <Item>
+        <Expression Value="srcToktyp"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>
