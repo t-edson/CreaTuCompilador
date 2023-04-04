@@ -35,7 +35,7 @@ procedure NextLine();
 begin
   if eof(inFile) then begin exit; end;
   readln(inFile, srcLine);  //Lee nueva línea
-  inc(srcRow);
+  srcRow := srcRow + 1;
   idxLine:=1;    //Apunta a primer caracter
 end;
 procedure NextChar();

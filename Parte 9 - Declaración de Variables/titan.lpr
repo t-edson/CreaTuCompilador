@@ -46,7 +46,7 @@ procedure NextLine();
 begin
   if eof(inFile) then begin exit; end;
   readln(inFile, srcLine);  //Lee nueva línea
-  inc(srcRow);
+  srcRow := srcRow + 1;
   idxLine:=1;    //Apunta a primer caracter
 end;
 procedure NextChar();
@@ -83,6 +83,7 @@ end;
 function IsAlphaDown(): integer;
 //Indica si el caracter en "srcChar" es alfabético minúscula.
 begin
+   if srcChar=ord('_') then begin exit(1); end;
    if srcChar>=ord('a') then begin
      if srcChar<=ord('z') then begin
        exit(1);
@@ -353,7 +354,7 @@ begin
     Capture(':');
     if MsjError<>'' then begin exit; end;
     //Debe seguir tipo común
-    NextToken();
+    TrimSpaces();
     typName := srcToken;
     if typName = 'integer' then begin
       NextToken();  //Toma token
@@ -362,7 +363,7 @@ begin
       varNames[nVars] := varName;
       varType[nVars]  := 1;  //Integer
       varArrSiz[nVars]:= arrSizeN;  //Es arreglo
-      inc(nVars);
+      nVars := nVars + 1;
     end else if typName = 'string' then begin
       //Debe terminar la línea
       NextToken();  //Toma token
@@ -371,7 +372,7 @@ begin
       varNames[nVars] := varName;
       varType[nVars]  := 2;  //String
       varArrSiz[nVars]:= arrSizeN;  //Es arreglo
-      inc(nVars);
+      nVars := nVars + 1;
     end else begin
       MsjError := 'Tipo desconocido: ' + typName;
       exit;
@@ -387,7 +388,7 @@ begin
       varNames[nVars] := varName;
       varType[nVars]  := 1;  //Integer
       varArrSiz[nVars]:= 0;  //No es arreglo
-      inc(nVars);
+      nVars := nVars + 1;
     end else if typName = 'string' then begin
       NextToken();  //Toma token
       asmline(varName + ' DB 256 dup(0)');
@@ -395,7 +396,7 @@ begin
       varNames[nVars] := varName;
       varType[nVars]  := 2;  //String
       varArrSiz[nVars]:= 0;  //No es arreglo
-      inc(nVars);
+      nVars := nVars + 1;
     end else begin
       MsjError := 'Tipo desconocido: ' + typName;
       exit;

@@ -9,9 +9,8 @@
         <Filename Value="titan.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="325"/>
-        <CursorPos X="23" Y="325"/>
-        <FoldState Value=" T5802 TMZ41071 T3M088 pj0jH0L4]9RkB066 T0Pa1Q piZk3S28]9biCQ2I T6jN013i"/>
+        <CursorPos Y="49"/>
+        <FoldState Value=" T5802 TMZ41 T3M08116C]B0Pa1Ib111213]W6oL047"/>
         <UsageCount Value="240"/>
         <Bookmarks Count="1">
           <Item0 ID="1"/>
@@ -19,7 +18,7 @@
         <Loaded Value="True"/>
       </Unit0>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="titan.lpr"/>
         <Caret Line="63" Column="25"/>
@@ -133,10 +132,6 @@
         <Filename Value="titan.lpr"/>
         <Caret Line="16"/>
       </Position29>
-      <Position30>
-        <Filename Value="titan.lpr"/>
-        <Caret Line="324" Column="7" TopLine="381"/>
-      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

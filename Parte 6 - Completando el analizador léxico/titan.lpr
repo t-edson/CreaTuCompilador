@@ -39,7 +39,7 @@ procedure NextLine();
 begin
   if eof(inFile) then begin exit; end;
   readln(inFile, srcLine);  //Lee nueva línea
-  inc(srcRow);
+  srcRow := srcRow + 1;
   idxLine:=1;    //Apunta a primer caracter
 end;
 procedure NextChar();
@@ -76,6 +76,7 @@ end;
 function IsAlphaDown(): integer;
 //Indica si el caracter en "srcChar" es alfabético minúscula.
 begin
+   if srcChar=ord('_') then begin exit(1); end;
    if srcChar>=ord('a') then begin
      if srcChar<=ord('z') then begin
        exit(1);
