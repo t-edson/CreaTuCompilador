@@ -467,6 +467,11 @@ begin
       MsjError := 'Se esperaba variable entera.';
       exit;
     end;
+    //Valida si es variable
+    if curVarArSiz<>0 then begin
+      MsjError := 'No se permiten arreglos o funciones como índices.';
+      exit;
+    end;
     idxVarNam := curVarName;
     NextToken();
   end else if srcToktyp = 3 then begin  //Literal Número
@@ -477,8 +482,7 @@ begin
     exit;
   end;
   Capture(']');      //Puede salir con error.
-end;
-//Análisis de expresiones
+end;//Análisis de expresiones
 procedure DeclareConstantString(constStr: string);
 {Inserta la declaración de una constante string, en la sección de datos, para
 poder trabajarla.}
@@ -496,56 +500,38 @@ begin
   asmline('.code');
   nconstr := nconstr + 1;
 end;
-procedure GetOperandArray(regnum: integer; vName: string; vType: Integer);
+procedure GetOperandArray(vName: string; vType: Integer);
 {Lee un operando de tipo "variable[índice]" y genera el código que carga el valor en
 un registro. "vName" es el nombre de la variable arreglo.
-El registro a usar dependerá del tipo del operando y del valor de "regnum":
-    regnum=1 -> Se usan los registros "eax" o "_strA"
-    regnum=2 -> Se usan los registros "ebx" o "_strB"  }
-var
-  mov_eax  : string;
-  addr_strA: string;
+Si el ítem es entero, su valor se devuelve en el registro "eax", si es cadena, se
+devuelve en "_strA"  }
 begin
-  if regnum = 1 then begin //Trabajaremos con Operando A
-    mov_eax   := 'mov eax, ';
-    addr_strA := ', addr _strA';
-  end else begin    //Trabajaremos con Operando B
-    mov_eax   := 'mov ebx, ';
-    addr_strA := ', addr _strB';
-  end;
   ReadArrayIndex();  //Actualiza "idxConVal" e "idxVarNam".
   if MsjError<>'' then begin exit; end;
   //Extraemos valor y devolvemos como expresión
   if vType = 1 then begin   //Arreglo de enteros
     if idxVarNam<>'' then begin   //Índice variable
       asmline('mov esi, ' + idxVarNam);
-      asmline(mov_eax + 'DWORD PTR [' + vName + '+4*esi]');
+      asmline('mov eax, DWORD PTR [' + vName + '+4*esi]');
     end else begin               //Índice numérico
       asmline('mov esi, ' + idxConVal);
-      asmline(mov_eax + 'DWORD PTR [' + vName + '+4*esi]');
+      asmline('mov eax, DWORD PTR [' + vName + '+4*esi]');
     end;
   end else begin                 //Arreglo de cadenas
     if idxVarNam<>'' then begin   //Índice variable
       asmline('mov esi, ' + idxVarNam);
       asmline('shl esi, 8');  //Multiplica por 256
       asmline('add esi, offset '+ vName);
-      asmline('invoke szCopy, esi' + addr_strA);
+      asmline('invoke szCopy, esi, addr _strA');
     end else begin               //Índice numérico
-      asmline('invoke szCopy, addr '+vName+'+256*' + idxConVal + addr_strA);
+      asmline('invoke szCopy, addr '+vName+'+256*' + idxConVal + ', addr _strA');
     end;
   end;
 end;
-procedure GetOperandChar(regnum: integer; vName: string);
+procedure GetOperandChar(vName: string);
 {Lee un operando de tipo "cadena[índice]" y genera el código que carga el código
-ASCII en EAX o EBX. "vName" es el nombre de la variable arreglo. }
-var
-  reg_eax  : string;
+ASCII en EAX. "vName" es el nombre de la variable arreglo. }
 begin
-  if regnum = 1 then begin //Trabajaremos con Operando A
-    reg_eax   := 'eax, ';
-  end else begin    //Trabajaremos con Operando B
-    reg_eax   := 'ebx, ';
-  end;
   ReadArrayIndex();  //Actualiza "idxConVal" e "idxVarNam".
   if MsjError<>'' then begin exit; end;
   //Extraemos valor y devolvemos como expresión
@@ -554,42 +540,31 @@ begin
   end else begin               //Índice numérico
     asmline('mov esi, ' + idxConVal);
   end;
-  asmline('mov '+ reg_eax + 'DWORD PTR [' + vName + '+esi]');
-  asmline('and  '+ reg_eax + '255'); //Deja solo el byte de menor peso
+  asmline('mov eax, DWORD PTR [' + vName + '+esi]');
+  asmline('and eax, 255'); //Deja solo el byte de menor peso
 end;
-procedure GetOperand(regnum: integer);
+procedure GetOperand();
 {Extrae un operando. Actualiza la variable "resType".
 Genera el código ensamblador necesario para que el operando siempre quede en un
-registro.
-El registro a usar dependerá del tipo del operando y del valor de "regnum":
-    regnum=1 -> Se usan los registros "eax" o "_strA"
-    regnum=2 -> Se usan los registros "ebx" o "_strB"  }
+registro. Para operandos enteros el valor se devuelve en el registros "eax",
+para cadenas, se devuelve en "_strA".}
 var
   resCteStr: string;
   vName    : string;
   vType    : Integer;
-  mov_eax  : string;
-  addr_strA: string;
 begin
   TrimSpaces();
-  if regnum = 1 then begin //Trabajaremos con Operando A
-    mov_eax := 'mov eax, ';
-    addr_strA := ', addr _strA';
-  end else begin    //Trabajaremos con Operando B
-    mov_eax := 'mov ebx, ';
-    addr_strA := ', addr _strB';
-  end;
   //Captura primer operando, asumiendo que es el único
   if srcToktyp = 3 then begin  //Literal Número
     resType := 1;   //Integer
-    asmline(mov_eax + srcToken);
+    asmline('mov eax, ' + srcToken);
     NextToken();
   end else if srcToktyp = 4 then begin  //Literal Cadena
     resType := 2;   //Tipo cadena
     resCteStr := copy(srcToken,2,length(srcToken)-2); //Valor
     DeclareConstantString(resCteStr);
     //Carga en registro de cadena
-    asmline('invoke szCopy, addr ' + constrName + addr_strA);
+    asmline('invoke szCopy, addr ' + constrName + ', addr _strA');
     NextToken();
   end else if srcToktyp = 2 then begin  //Identificador
     //Busca variable
@@ -608,7 +583,7 @@ begin
       if curVarArSiz = 0 then begin  //No es un arreglo
         //Pero puede ser acceso a una cadena
         if curVarType = 2 then begin //Es acceso a caracter
-          GetOperandChar(regnum, vName);
+          GetOperandChar(vName);
           if MsjError<>'' then begin exit; end;
           resType := 1;  //Devuelve el código ASCII.
         end else begin
@@ -616,15 +591,15 @@ begin
           exit;
         end;
       end else begin        //Es un arreglo
-        GetOperandArray(regnum, vName, vType);
+        GetOperandArray(vName, vType);
         if MsjError<>'' then begin exit; end;
         resType := vType;  //Devuelve el mismo tipo que la variable.
       end;
     end else begin                //Es una variable común
       if vType= 1 then begin         //Variable entera
-        asmline(mov_eax + vName); //Carga en registro
+        asmline('mov eax, ' + vName); //Carga en registro
       end else begin                 //Variable cadena
-        asmline('invoke szCopy, addr ' + vName + addr_strA);
+        asmline('invoke szCopy, addr ' + vName + ', addr _strA');
       end;
       resType := vType;   //Tipo del resultado
     end;
@@ -639,7 +614,7 @@ procedure ProcessBlock;
 begin
   while EndOfBlock()<>1 do begin
     //Procesa la instrucción
-    GetOperand(1);
+    GetOperand();
 
     //Verifica delimitador de instrucción
     Capture(';');

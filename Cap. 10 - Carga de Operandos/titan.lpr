@@ -461,39 +461,27 @@ begin
   nconstr := nconstr + 1;
 end;
 
-procedure GetOperand(regnum: integer);
+procedure GetOperand();
 {Extrae un operando. Actualiza la variable "resType".
 Genera el código ensamblador necesario para que el operando siempre quede en un
-registro.
-El registro a usar dependerá del tipo del operando y del valor de "regnum":
-    regnum=1 -> Se usan los registros "eax" o "_strA"
-    regnum=2 -> Se usan los registros "ebx" o "_strB"  }
+registro.}
 var
   resCteStr: string;
   vName    : string;
   vType    : Integer;
-  mov_eax  : string;
-  addr_strA: string;
 begin
   TrimSpaces();
-  if regnum = 1 then begin //Trabajaremos con Operando A
-    mov_eax := 'mov eax, ';
-    addr_strA := ', addr _strA';
-  end else begin    //Trabajaremos con Operando B
-    mov_eax := 'mov ebx, ';
-    addr_strA := ', addr _strB';
-  end;
   //Captura primer operando, asumiendo que es el único
   if srcToktyp = 3 then begin  //Literal Número
     resType := 1;   //Integer
-    asmline(mov_eax + srcToken);
+    asmline('mov eax, ' + srcToken);
     NextToken();
   end else if srcToktyp = 4 then begin  //Literal Cadena
     resType := 2;   //Tipo cadena
     resCteStr := copy(srcToken,2,length(srcToken)-2); //Valor
     DeclareConstantString(resCteStr);
     //Carga en registro de cadena
-    asmline('invoke szCopy, addr ' + constrName + addr_strA);
+    asmline('invoke szCopy, addr ' + constrName + ', addr _strA');
     NextToken();
   end else if srcToktyp = 2 then begin  //Identificador
     //Busca variable
@@ -509,9 +497,9 @@ begin
     TrimSpaces();
 
     if vType= 1 then begin         //Variable entera
-      asmline(mov_eax + vName); //Carga en registro
+      asmline('mov eax, ' + vName); //Carga en registro
     end else begin                 //Variable cadena
-      asmline('invoke szCopy, addr ' + vName + addr_strA);
+      asmline('invoke szCopy, addr ' + vName + ', addr _strA');
     end;
     resType := vType;   //Tipo del resultado
   end else begin
@@ -519,13 +507,12 @@ begin
     exit;
   end;
 end;
-
 procedure ProcessBlock;
 //Procesa un bloque de código.
 begin
   while EndOfBlock()<>1 do begin
     //Procesa la instrucción
-    GetOperand(1);
+    GetOperand();
 
     //Verifica delimitador de instrucción
     Capture(';');
