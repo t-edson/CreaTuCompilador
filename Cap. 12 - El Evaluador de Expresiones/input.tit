@@ -1,0 +1,4 @@
+var cad: string;
+//Ejemplo
+cad = "Hola";
+println 123;
