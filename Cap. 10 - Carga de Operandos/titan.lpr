@@ -326,6 +326,14 @@ begin
   WriteLn(outFile, '    ' + lin);
 end;
 //Análisis sintáctico-semántico.
+procedure RegisterVar(vName: String; vType: integer; arrSiz: integer);
+//Registra una variable en los arreglos correspondientes.
+begin
+  varNames[nVars] := vName;
+  varType[nVars]  := vType;
+  varArrSiz[nVars]:= arrSiz;
+  nVars := nVars + 1;
+end;
 procedure ParserVar();
 //Hace el análisis sintáctico para la declaración de variables.
 var
@@ -367,20 +375,12 @@ begin
     if typName = 'integer' then begin
       NextToken();  //Toma token
       asmline(varName + ' DD ' + arrSize + ' dup(0)');
-      //Registra variable
-      varNames[nVars] := varName;
-      varType[nVars]  := 1;  //Integer
-      varArrSiz[nVars]:= arrSizeN;  //Es arreglo
-      nVars := nVars + 1;
+      RegisterVar(varName, 1, arrSizeN) //Registra arreglo Integer
     end else if typName = 'string' then begin
       //Debe terminar la línea
       NextToken();  //Toma token
       asmline(varName + ' DB '+ arrSize256 + ' dup(0)');
-      //Registra variable
-      varNames[nVars] := varName;
-      varType[nVars]  := 2;  //String
-      varArrSiz[nVars]:= arrSizeN;  //Es arreglo
-      nVars := nVars + 1;
+      RegisterVar(varName, 2, arrSizeN) //Registra arreglo String
     end else begin
       MsjError := 'Tipo desconocido: ' + typName;
       exit;
@@ -392,19 +392,11 @@ begin
     if typName = 'integer' then begin
       NextToken();  //Toma token
       asmline(varName + ' DD 0');
-      //Registra variable
-      varNames[nVars] := varName;
-      varType[nVars]  := 1;  //Integer
-      varArrSiz[nVars]:= 0;  //No es arreglo
-      nVars := nVars + 1;
+      RegisterVar(varName, 1, 0) //Registra Integer
     end else if typName = 'string' then begin
       NextToken();  //Toma token
       asmline(varName + ' DB 256 dup(0)');
-      //Registra variable
-      varNames[nVars] := varName;
-      varType[nVars]  := 2;  //String
-      varArrSiz[nVars]:= 0;  //No es arreglo
-      nVars := nVars + 1;
+      RegisterVar(varName, 2, 0) //Registra String
     end else begin
       MsjError := 'Tipo desconocido: ' + typName;
       exit;

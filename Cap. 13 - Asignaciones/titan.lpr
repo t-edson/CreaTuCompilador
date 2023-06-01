@@ -23,6 +23,12 @@ var varArrSiz  : array[0..255] of integer;
 var curVarName : string;
 var curVarType : integer;  //Tipo de dato: 1->integer. 2->string.
 var curVarArSiz: integer;
+//Datos de variable a asignar
+var asgVarName : string;
+var asgVarType : integer;
+var asgVarArSiz: integer;
+var asgIdVarNam: string;   //Nombre de índice variable
+var asgIdConVal: string;   //Valor de índice constante. Por practicidad, como cadena.
 
 //Campos para arreglos
 var idxVarNam  : string;   //Nombre de índice variable
@@ -699,13 +705,94 @@ begin
     exit;
   end;
 end;
+
+procedure ProcessAssigment();
+begin
+  FindVariable();   //Actualiza "curVarName", "curVarType" y "curVarArSiz".
+  if curVarName = '' then begin
+    MsjError := 'Se esperaba variable: ' + srcToken;
+    exit;
+  end;
+  NextToken(); //Toma nombre de variable
+  TrimSpaces();
+  //Preservamos datos de variable destino
+  asgVarName := curVarName;
+  asgVarType := curVarType;
+  asgVarArSiz := curVarArSiz;
+  if asgVarArSiz>0 then begin //La variable destino es un arreglo.
+    if srcToken = '[' then begin
+      ReadArrayIndex();  //Actualiza "idxConVal" e "idxVarNam".
+      if MsjError<>'' then begin exit; end;
+      //Actualiza variables de arreglo.
+      asgIdConVal := idxConVal;
+      asgIdVarNam := idxVarNam;
+    end else begin  //Sin corchetes
+      //Puede ser asignación de arreglos, pero no lo implementamos por ahora.
+      MsjError := 'Se esperaba "[".';
+      exit;
+    end;
+  end;
+  TrimSpaces();
+  if srcToken<>'=' then begin
+    MsjError := 'Se esperaba "=".';
+    exit;
+  end;
+  NextToken();  //Toma "="
+  //Evalúa expresión
+  EvaluateExpression();
+  if MsjError<>'' then begin
+    exit;
+  end;
+  //Codifica la asignación
+  if resType = 1 then begin
+    //Integer
+    if asgVarType<>1 then begin
+      MsjError := 'No se puede asignar un entero a esta variable.';
+      exit;
+    end;
+    if asgVarArSiz=0 then begin  //Sin arreglo
+      asmline('mov ' + asgVarName + ', eax');
+    end else begin  //Asignación a Arreglo
+      if asgIdVarNam<>'' then begin //Indexado por variable
+        asmline('mov esi, DWORD PTR [' + asgIdVarNam + ']');
+      end else begin          //Indexado por constante
+        asmline('mov esi, ' + asgIdConVal);
+      end;
+      asmline('mov DWORD PTR [' + asgVarName + ' + 4*esi], eax');
+    end;
+  end else begin
+    //String
+    if asgVarType<>2 then begin
+      MsjError := 'No se puede asignar una cadena a esta variable.';
+    end;
+    //<variable> <- Registro
+    if asgVarArSiz=0 then begin  //Sin arreglo
+      asmline('invoke szCopy, addr _strA, addr '+ asgVarName);
+    end else begin  //Asignación a Arreglo
+      if asgIdVarNam<>'' then begin //Indexado por variable
+        //asmline('mov eax, DWORD PTR [' + asgIdVarNam + ']');
+        asmline('mov esi, ' + asgIdVarNam);
+        asmline('shl esi, 8');  //Multiplica por 256
+        asmline('add esi, offset '+ asgVarName);
+        asmline('invoke szCopy, addr _strA, esi');
+      end else begin          //Indexado por constante
+        asmline('invoke szCopy, addr _strA, addr '+ asgVarName + ' + 256*' + asgIdConVal);
+      end;
+    end;
+  end;
+end;
 procedure ProcessBlock;
 //Procesa un bloque de código.
 begin
   while EndOfBlock()<>1 do begin
-    //Procesa la instrucción
-    EvaluateExpression();
-
+    if srcToktyp = 2 then begin
+      //Es un identificador, debe ser una asignación
+      ProcessAssigment();
+      if MsjError<>'' then begin break; end;
+    end else begin
+      MsjError := 'Instrucción desconocida: ' + srcToken;
+      break;
+    end;
     //Verifica delimitador de instrucción
     Capture(';');
     if MsjError<>'' then begin exit; end;
